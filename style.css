@@ -1,0 +1,46 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+textarea {
+    width: 900px;
+    height: 300px;
+    resize: none;
+}
+
+.pad {
+    width: 900px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.key,.key_func {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    border: 1px solid black;
+    margin: 5px;
+}
+span {
+    position: absolute;
+    color:rgb(180, 173, 173);
+}
+
+.active {
+    color:green;
+}
+
+span.symb{
+    top: 50%;
+    left: 60%;
+}
+
+span.symb_shifted{
+    top:10%;
+    left:10%;
+}
+
