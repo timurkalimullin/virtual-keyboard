@@ -10,25 +10,21 @@ pad.classList.add('pad');
 document.body.append(pad);
 
 
-window.addEventListener('load', (e)=>{
-    renderKeypad();
-});
-
 const lang_pad = {
     en : [
         [ '`','~',], [ '1','!'], ['2','@'], ['3', '#'], ['4', '$'], ['5', '%'], ['6', '^'], ['7','&'], ['8','*'], ['9', '('], ['0', ')'], ['-', '_'], ['=', '+'], ['Backspace'],
-        ['Tab'], ['q' ], ['w' ], ['e' ], ['r'], ['t'], ['y'], ['u'], ['i'], ['o'], ['p'], ['[','{'], [']', '}'], ['Enter'],
-        ['CapsLock'], ['a'],['s'],['d'],['f'],['g'],['h'],['j'],['k'],['l'],[';',':'],["'", '"'],['\\', '|'],
-        ['LShift'],['z'],['x'],['c'],['v'],['b'],['n'],['m'],[',','<'],['.','>'],['/','?'],['RShift'],
-        ['LCtrl'],['Win'], ['LAlt'],['   '], ['Ralt'],['Win'], ['Context'], ['RCtrl']
+        ['Tab'], ['q','Q' ], ['w','W' ], ['e','E' ], ['r','R'], ['t','T'], ['y','Y'], ['u','U'], ['i','I'], ['o','O'], ['p','P'], ['[','{'], [']', '}'], ['Enter'],
+        ['CapsLock'], ['a','A'],['s','S'],['d','D'],['f','F'],['g','G'],['h','H'],['j','J'],['k','K'],['l','L'],[';',':'],["'", '"'],['\\', '|'],
+        ['Shift'],['z','Z'],['x','X'],['c','C'],['v','V'],['b','B'],['n','N'],['m','M'],[',','<'],['.','>'],['/','?'],['Shift'],
+        ['Ctrl'],['Win'], ['Alt'],[' '], ['Alt'],['Win'], ['Context'], ['Ctrl']
     ],
 
     ru : [
-        [ 'ё'], [ '1','!'], ['2','"'], ['3', '№'], ['4', ';'], ['5', '%'], ['6', ':'], ['7','?'], ['8','*'], ['9', '('], ['0', ')'], ['-', '_'], ['=', '+'], ['Backspace'],
-        ['Tab'], ['й' ], ['ц' ], ['у' ], ['к'], ['е'], ['н'], ['г'], ['ш'], ['щ'], ['з'], ['х'], ['ъ'], ['Enter'],
-        ['CapsLock'], ['ф'],['ы'],['в'],['а'],['п'],['р'],['о'],['л'],['д'],['ж'],["э"],['\\', '/'],
-        ['LShift'],['я'],['ч'],['с'],['м'],['и'],['т'],['ь'],['б'],['ю'],['.',','],['RShift'],
-        ['LCtrl'],['Win'], ['LAlt'],['   '], ['Ralt'],['Win'], ['Context'], ['RCtrl']
+        [ 'ё','Ё'], [ '1','!'], ['2','"'], ['3', '№'], ['4', ';'], ['5', '%'], ['6', ':'], ['7','?'], ['8','*'], ['9', '('], ['0', ')'], ['-', '_'], ['=', '+'], ['Backspace'],
+        ['Tab'], ['й','Й' ], ['ц','Ц'], ['у','У'], ['к','К'], ['е','Е'], ['н','Н'], ['г','Г'], ['ш','Ш'], ['щ','Щ'], ['з','З'], ['х','Х'], ['ъ','Ъ'], ['Enter'],
+        ['CapsLock'], ['ф','Ф'],['ы','Ы'],['в','В'],['а','А'],['п','П'],['р','Р'],['о','О'],['л','Л'],['д','Д'],['ж','Ж'],['э','Э'],['\\', '/'],
+        ['Shift'],['я','Я'],['ч','Ч'],['с','С'],['м','М'],['и','И'],['т','Т'],['ь','Ь'],['б','Б'],['ю','Ю'],['.',','],['Shift'],
+        ['Ctrl'],['Win'], ['Alt'],[' '], ['Alt'],['Win'], ['Context'], ['Ctrl']
     ],
 },
 keyPad_keys = [
@@ -40,86 +36,75 @@ keyPad_keys = [
 ],
 
 symbols = {
-    symb: '`1234567890-=qwertyuiop[]asdfghjkl;\'\\zxcvbnm,./ёйцукенгшщзхъфывапролджэячсмитьбю.',
-    symb_shifted: '~!@#$%^&*()_+{}:"|<>?"№:?/,'
+    en: {
+        normal: '`1234567890-=qwertyuiop[]asdfghjkl;\'\\zxcvbnm,./',
+        shifted: '~!@#$%^&*()_+QWERTYUIOP{}ASDFGHJKL:"|ZXCVBNM<>?',
+    },
+    ru: {
+        normal: 'ё1234567890-=йцукенгшщзхъфывапролджэ\\ячсмитьбю.',
+        shifted: '~!@#$%^&*()_+QWERTYUIOP{}ASDFGHJKL:"|ZXCVBNM<>?'
+    }
+
 },
 key_func = ['Backspace','Tab','Enter','CapsLock','ShiftLeft','ShiftRight', 'ControlLeft','OSLeft','AltLeft','Space', 'AltRight','OSRight', 'ContextMenu', 'ControlRight'],
 parametres = {
-    shifted: false,
-    lang: 'en',
-    capsLock:false
+    lang: 'ru'
 };
 
 
 
-function renderKeypad() {
-
-    lang_pad[parametres.lang].map((el,i)=>{
-        let div;
-        div = document.createElement('div');
-        if (key_func.includes(el[0])) {
-            div.classList.add('key');
-            div.classList.add('key_func');
-            div.classList.add(keyPad_keys[i]);
-        } else {
-            div.classList.add('key');
-            div.classList.add(keyPad_keys[i]);
+lang_pad[parametres.lang].map((el,i)=>{
+    let key = document.createElement('div');
+    key.classList.add(keyPad_keys[i]);
+    if (key_func.includes(key.className)) {
+        key.classList.add('key_func');
+        key.classList.add('key');
+    } else {
+        key.classList.add('key');
+    }
+    pad.append(key);
+    el.map(item=>{
+        let span = document.createElement('span');
+        if (symbols[parametres.lang].normal.includes(item)) {
+            span.classList.add('normal');
+        } else if (symbols[parametres.lang].shifted.includes(item)) {
+            span.classList.add('shifted');
         }
-        el.map(item=>{
-            let span = document.createElement('span');
-            if (symbols.symb.includes(item)) {
-                span.classList.add('symb');
-                span.classList.add('active');
-            } else if (symbols.symb_shifted.includes(item)) {
-                span.classList.add('symb_shifted');
-            } else {
-                span.classList.add('func');
-                span.classList.add('active');
-            }
-    
-            span.innerHTML = String(item).toUpperCase();
-            div.append(span);
-        });
-        pad.append(div);
+        span.innerText = item;
+        key.append(span);
     });
 
-    window.addEventListener('keydown', (e)=>{
-        textOutput.focus();
-        document.querySelectorAll('.key').forEach(el=>{
-            if (el.className.includes(e.code)) {
-               el.classList.add('pressed');
-            }
-        });
+    document.querySelectorAll('.normal').forEach(el=>{
+        el.classList.add('active');
     });
     
-    window.addEventListener('keyup', (e)=>{
-        document.querySelectorAll('.key').forEach(el=>{
-            if (el.className.includes(e.code)) {
-               el.classList.remove('pressed');
-            }
-        });
+});
+
+
+window.addEventListener('contextmenu', (e)=>{
+    document.querySelectorAll('.key>span').forEach(item=>{
+       if (!item.closest('div').className.includes('key_func')) {
+        item.classList.toggle('active');
+       }
     });
-    
+});
+
+window.addEventListener('keydown', (e)=>{
+    textOutput.focus();
     document.querySelectorAll('.key').forEach(el=>{
-       el.addEventListener('mousedown', (e)=>{
-            textOutput.focus();
+        if (el.className.includes(e.code)) {
             el.classList.add('pressed');
-       });
+        }
     });
-    
-    document.querySelectorAll('.key').forEach(el=>{
-        el.addEventListener('mouseup', (e)=>{
-             el.classList.remove('pressed');
-        });
-    });
-    
-     document.querySelectorAll('.key').forEach(el=>{
-        el.addEventListener('mouseleave', (e)=>{
-             el.classList.remove('pressed');
-        });
-    });
-}
+});
 
+window.addEventListener('keyup', (e)=>{
+    document.querySelectorAll('.key').forEach(el=>{
+        if (el.className.includes(e.code)) {
+            el.classList.remove('pressed');
+        }
+    });
+});
 
 
 
