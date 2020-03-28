@@ -42,7 +42,7 @@ symbols = {
     },
     ru: {
         normal: 'ё1234567890-=йцукенгшщзхъфывапролджэ\\ячсмитьбю.',
-        shifted: '~!@#$%^&*()_+QWERTYUIOP{}ASDFGHJKL:"|ZXCVBNM<>?'
+        shifted: 'Ё!"№;%:?*()_+ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭ/ЯЧСМИТЬБЮ,'
     }
 
 },
@@ -59,6 +59,7 @@ lang_pad[parametres.lang].map((el,i)=>{
     if (key_func.includes(key.className)) {
         key.classList.add('key_func');
         key.classList.add('key');
+        key.setAttribute('id', keyPad_keys[i]);
     } else {
         key.classList.add('key');
     }
@@ -80,20 +81,14 @@ lang_pad[parametres.lang].map((el,i)=>{
     
 });
 
-
-window.addEventListener('contextmenu', (e)=>{
-    document.querySelectorAll('.key>span').forEach(item=>{
-       if (!item.closest('div').className.includes('key_func')) {
-        item.classList.toggle('active');
-       }
-    });
-});
+// handles keyboard press
 
 window.addEventListener('keydown', (e)=>{
-    textOutput.focus();
+    e.preventDefault();
     document.querySelectorAll('.key').forEach(el=>{
         if (el.className.includes(e.code)) {
             el.classList.add('pressed');
+            pressed_down(el);
         }
     });
 });
@@ -102,12 +97,91 @@ window.addEventListener('keyup', (e)=>{
     document.querySelectorAll('.key').forEach(el=>{
         if (el.className.includes(e.code)) {
             el.classList.remove('pressed');
+            pressed_up(el);
         }
     });
 });
 
+// handles click on buttons
 
+document.querySelectorAll('.key').forEach(el=>{
+el.addEventListener('mousedown', (e)=>{
+        textOutput.focus();
+        el.classList.add('pressed');
+        pressed_down(el);
+    });
+});
 
+document.querySelectorAll('.key').forEach(el=>{
+    el.addEventListener('mouseup', (e)=>{
+        el.classList.remove('pressed');
+        pressed_up(el);
+    });
+});
+
+document.querySelectorAll('.key').forEach(el=>{
+    el.addEventListener('mouseleave', (e)=>{
+        el.classList.remove('pressed');
+    });
+});
+
+// finds caret location
+
+function findCaret() {
+    let start,end;
+
+    start = textOutput.selectionStart;
+    end = textOutput.selectionEnd;
+
+    return [start, end];
+}
+
+// insert letter symbols
+
+function pressed_down(key) {
+    let ins = key.getAttribute('id') || key.querySelector('.active').innerText,
+    caret = findCaret()[0],
+    string = textOutput.value.split('');
+
+    if (!key.className.includes('key_func')) {
+        string.splice(caret,0,ins);
+        textOutput.value = string.join('');
+        textOutput.selectionStart = textOutput.selectionEnd = caret +1;
+    }
+
+    if (key.code == 'Backspace' || key.getAttribute('id') == 'Backspace') {
+        string.splice(caret-1,1);
+        textOutput.value = string.join('');
+        textOutput.selectionStart = textOutput.selectionEnd = caret - 1;
+    }
+
+    if (key.code == 'ShiftLeft' || key.getAttribute('id') == 'ShiftLeft' || key.code == 'ShiftRight' || key.getAttribute('id') == 'ShiftRight') {
+        document.querySelectorAll('.normal').forEach(item=>{
+            item.classList.remove('active');
+        });
+       document.querySelectorAll('.shifted').forEach(item=>{
+           item.classList.add('active');
+        });
+    }
+
+    if (key.code == 'Tab' || key.getAttribute('id') == 'Tab') {
+        string.splice(caret,0,'    ');
+        textOutput.value = string.join('');
+        textOutput.selectionStart = textOutput.selectionEnd = caret +4;
+    }
+
+}  
+
+function pressed_up(key) {
+    if (key.code == 'ShiftLeft' || key.getAttribute('id') == 'ShiftLeft' || key.code == 'ShiftRight' || key.getAttribute('id') == 'ShiftRight') {
+        document.querySelectorAll('.shifted').forEach(item=>{
+            item.classList.remove('active');
+        });
+       document.querySelectorAll('.normal').forEach(item=>{
+           item.classList.add('active');
+        });
+    }
+}
 
 
 
