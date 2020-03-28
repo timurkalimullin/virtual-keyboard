@@ -1,9 +1,18 @@
+
+        
 let textOutput = document.createElement('textarea');
 textOutput.classList.add(`textOutput`);
 document.body.append(textOutput);
+
+
 let pad = document.createElement('div');
 pad.classList.add('pad');
 document.body.append(pad);
+
+
+window.addEventListener('load', (e)=>{
+    renderKeypad();
+});
 
 const lang_pad = {
     en : [
@@ -11,7 +20,7 @@ const lang_pad = {
         ['Tab'], ['q' ], ['w' ], ['e' ], ['r'], ['t'], ['y'], ['u'], ['i'], ['o'], ['p'], ['[','{'], [']', '}'], ['Enter'],
         ['CapsLock'], ['a'],['s'],['d'],['f'],['g'],['h'],['j'],['k'],['l'],[';',':'],["'", '"'],['\\', '|'],
         ['LShift'],['z'],['x'],['c'],['v'],['b'],['n'],['m'],[',','<'],['.','>'],['/','?'],['RShift'],
-        ['LCtrl'],['Win'], ['LAlt'],['Space'], ['Ralt'],['Win'], ['Context'], ['RCtrl']
+        ['LCtrl'],['Win'], ['LAlt'],['   '], ['Ralt'],['Win'], ['Context'], ['RCtrl']
     ],
 
     ru : [
@@ -19,7 +28,7 @@ const lang_pad = {
         ['Tab'], ['й' ], ['ц' ], ['у' ], ['к'], ['е'], ['н'], ['г'], ['ш'], ['щ'], ['з'], ['х'], ['ъ'], ['Enter'],
         ['CapsLock'], ['ф'],['ы'],['в'],['а'],['п'],['р'],['о'],['л'],['д'],['ж'],["э"],['\\', '/'],
         ['LShift'],['я'],['ч'],['с'],['м'],['и'],['т'],['ь'],['б'],['ю'],['.',','],['RShift'],
-        ['LCtrl'],['Win'], ['LAlt'],['Space'], ['Ralt'],['Win'], ['Context'], ['RCtrl']
+        ['LCtrl'],['Win'], ['LAlt'],['   '], ['Ralt'],['Win'], ['Context'], ['RCtrl']
     ],
 },
 keyPad_keys = [
@@ -41,31 +50,81 @@ parametres = {
     capsLock:false
 };
 
-lang_pad[parametres.lang].map((el,i)=>{
-    let div;
-    div = document.createElement('div');
-    if (key_func.includes(el[0])) {
-        div.classList.add('key_func');
-        div.classList.add(keyPad_keys[i]);
-    } else {
-        div.classList.add('key');
-        div.classList.add(keyPad_keys[i]);
-    }
-    el.map(item=>{
-        let span = document.createElement('span');
-        if (symbols.symb.includes(item)) {
-            span.classList.add('symb');
-        } else if (symbols.symb_shifted.includes(item)) {
-            span.classList.add('symb_shifted');
-        } else {
-            span.classList.add('func');
-        }
 
-        span.innerHTML = item.toUpperCase();
-        div.append(span);
+
+function renderKeypad() {
+
+    lang_pad[parametres.lang].map((el,i)=>{
+        let div;
+        div = document.createElement('div');
+        if (key_func.includes(el[0])) {
+            div.classList.add('key');
+            div.classList.add('key_func');
+            div.classList.add(keyPad_keys[i]);
+        } else {
+            div.classList.add('key');
+            div.classList.add(keyPad_keys[i]);
+        }
+        el.map(item=>{
+            let span = document.createElement('span');
+            if (symbols.symb.includes(item)) {
+                span.classList.add('symb');
+                span.classList.add('active');
+            } else if (symbols.symb_shifted.includes(item)) {
+                span.classList.add('symb_shifted');
+            } else {
+                span.classList.add('func');
+                span.classList.add('active');
+            }
+    
+            span.innerHTML = String(item).toUpperCase();
+            div.append(span);
+        });
+        pad.append(div);
     });
-    pad.append(div);
-});
+
+    window.addEventListener('keydown', (e)=>{
+        textOutput.focus();
+        document.querySelectorAll('.key').forEach(el=>{
+            if (el.className.includes(e.code)) {
+               el.classList.add('pressed');
+            }
+        });
+    });
+    
+    window.addEventListener('keyup', (e)=>{
+        document.querySelectorAll('.key').forEach(el=>{
+            if (el.className.includes(e.code)) {
+               el.classList.remove('pressed');
+            }
+        });
+    });
+    
+    document.querySelectorAll('.key').forEach(el=>{
+       el.addEventListener('mousedown', (e)=>{
+            textOutput.focus();
+            el.classList.add('pressed');
+       });
+    });
+    
+    document.querySelectorAll('.key').forEach(el=>{
+        el.addEventListener('mouseup', (e)=>{
+             el.classList.remove('pressed');
+        });
+    });
+    
+     document.querySelectorAll('.key').forEach(el=>{
+        el.addEventListener('mouseleave', (e)=>{
+             el.classList.remove('pressed');
+        });
+    });
+}
+
+
+
+
+
+
 
 
 

@@ -24,10 +24,18 @@ textarea {
     height: 50px;
     border: 1px solid black;
     margin: 5px;
+    transition: all 0.5s;
+    cursor: pointer;
+}
+
+.key.pressed{
+    background-color: rgb(25, 149, 180);
+    border-radius: 30%;
 }
 span {
     position: absolute;
     color:rgb(180, 173, 173);
+    user-select: none;
 }
 
 .active {
