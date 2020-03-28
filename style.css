@@ -13,10 +13,17 @@ textarea {
 
 .pad {
     max-width: 900px;
+}
+
+.en,.ru {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
     user-select: none;
+}
+
+.pad>.hidden{
+    display: none;
 }
 
 .key {
