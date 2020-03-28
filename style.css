@@ -16,6 +16,7 @@ textarea {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
+    user-select: none;
 }
 
 .key {
@@ -24,7 +25,7 @@ textarea {
     height: 50px;
     border: 1px solid rgb(142, 175, 245);
     margin: 5px;
-    transition: all 0.5s;
+    transition: all 0.2s;
     cursor: pointer;
     background-color: rgb(201, 235, 248);
 }
@@ -36,7 +37,7 @@ textarea {
 }
 
 .key:hover{
-    background-color: rgb(93, 197, 238);
+   border:2px solid green;
 }
 
 .key_func span{
