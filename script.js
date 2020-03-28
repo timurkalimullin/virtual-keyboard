@@ -1,15 +1,11 @@
 
-        
-let textOutput = document.createElement('textarea');
-textOutput.classList.add(`textOutput`);
-document.body.append(textOutput);
+if (localStorage.lang !== 'ru' && localStorage.lang !== 'en') {
+    localStorage.setItem('lang', 'en');
+} 
 
+       
 
-let pad = document.createElement('div');
-pad.classList.add('pad');
-document.body.append(pad);
-
-
+let textOutput, pad, ru, en;
 const lang_pad = {
     en : [
         [ '`','~',], [ '1','!'], ['2','@'], ['3', '#'], ['4', '$'], ['5', '%'], ['6', '^'], ['7','&'], ['8','*'], ['9', '('], ['0', ')'], ['-', '_'], ['=', '+'], ['Backspace'],
@@ -51,137 +47,200 @@ parametres = {
     lang: 'ru'
 };
 
+createTextoutput();
 
+createPad();
 
-lang_pad[parametres.lang].map((el,i)=>{
-    let key = document.createElement('div');
-    key.classList.add(keyPad_keys[i]);
-    if (key_func.includes(key.className)) {
-        key.classList.add('key_func');
-        key.classList.add('key');
-        key.setAttribute('id', keyPad_keys[i]);
-    } else {
-        key.classList.add('key');
-    }
-    pad.append(key);
-    el.map(item=>{
-        let span = document.createElement('span');
-        if (symbols[parametres.lang].normal.includes(item)) {
-            span.classList.add('normal');
-        } else if (symbols[parametres.lang].shifted.includes(item)) {
-            span.classList.add('shifted');
-        }
-        span.innerText = item;
-        key.append(span);
-    });
+renderKeypad('en');
+renderKeypad('ru');
 
-    document.querySelectorAll('.normal').forEach(el=>{
-        el.classList.add('active');
-    });
-    
-});
+listeners();
 
 // handles keyboard press
 
-window.addEventListener('keydown', (e)=>{
-    e.preventDefault();
-    document.querySelectorAll('.key').forEach(el=>{
-        if (el.className.includes(e.code)) {
-            el.classList.add('pressed');
-            pressed_down(el);
-        }
-    });
-});
+function listeners() {
+    let keys = document.querySelectorAll('.wrapper:not(.hidden) .key');
 
-window.addEventListener('keyup', (e)=>{
-    document.querySelectorAll('.key').forEach(el=>{
-        if (el.className.includes(e.code)) {
+    // handles keyboard events
+
+    window.addEventListener('keydown', (e)=>{
+        e.preventDefault();
+        keys.forEach(el=>{
+            if (el.className.includes(e.code)) {
+                el.classList.add('pressed');
+                pressed_down(el);
+            }
+        });
+    });
+
+    window.addEventListener('keyup', (e)=>{
+        keys.forEach(el=>{
+            if (el.className.includes(e.code)) {
+                el.classList.remove('pressed');
+                pressed_up(el);
+            }
+        });
+    });
+
+    // handles mouse events 
+
+    keys.forEach(el=>{
+        el.addEventListener('mousedown', (e)=>{
+                textOutput.focus();
+                el.classList.add('pressed');
+                pressed_down(el);
+            });
+    });
+
+    keys.forEach(el=>{
+        el.addEventListener('mouseup', (e)=>{
             el.classList.remove('pressed');
             pressed_up(el);
+        });
+    });
+
+    keys.forEach(el=>{
+        el.addEventListener('mouseleave', (e)=>{
+            el.classList.remove('pressed');
+        });
+    });
+
+    // finds caret location
+
+    function findCaret() {
+        let start,end;
+
+        start = textOutput.selectionStart;
+        end = textOutput.selectionEnd;
+
+        return [start, end];
+    }
+
+    // insert letter symbols and handle function keys
+
+    function pressed_down(key, e) {
+        let ins = key.getAttribute('id') || key.querySelector('.active').innerText,
+        caret = findCaret()[0],
+        string = textOutput.value.split('');
+        console.log(ins);
+
+        if (!key.className.includes('key_func')) {
+            string.splice(caret,0,ins);
+            textOutput.value = string.join('');
+            textOutput.selectionStart = textOutput.selectionEnd = caret +1;
         }
-    });
-});
 
-// handles click on buttons
+        if (key.code == 'Backspace' || key.getAttribute('id') == 'Backspace') {
+            string.splice(caret-1,1);
+            textOutput.value = string.join('');
+            textOutput.selectionStart = textOutput.selectionEnd = caret - 1;
+        }
 
-document.querySelectorAll('.key').forEach(el=>{
-el.addEventListener('mousedown', (e)=>{
-        textOutput.focus();
-        el.classList.add('pressed');
-        pressed_down(el);
-    });
-});
+        if (key.code == 'ShiftLeft' || key.getAttribute('id') == 'ShiftLeft' || key.code == 'ShiftRight' || key.getAttribute('id') == 'ShiftRight') {
+            document.querySelectorAll('.normal').forEach(item=>{
+                item.classList.remove('active');
+            });
+            document.querySelectorAll('.shifted').forEach(item=>{
+                item.classList.add('active');
+            });
+        }
 
-document.querySelectorAll('.key').forEach(el=>{
-    el.addEventListener('mouseup', (e)=>{
-        el.classList.remove('pressed');
-        pressed_up(el);
-    });
-});
+        if (key.code == 'Tab' || key.getAttribute('id') == 'Tab') {
+            string.splice(caret,0,'    ');
+            textOutput.value = string.join('');
+            textOutput.selectionStart = textOutput.selectionEnd = caret +4;
+        }
 
-document.querySelectorAll('.key').forEach(el=>{
-    el.addEventListener('mouseleave', (e)=>{
-        el.classList.remove('pressed');
-    });
-});
+        if (key.code == 'Space' || key.getAttribute('id') == 'Space') {
+            string.splice(caret,0,' ');
+            textOutput.value = string.join('');
+            textOutput.selectionStart = textOutput.selectionEnd = caret +1;
+        }
 
-// finds caret location
+        if (key.code == 'Enter' || key.getAttribute('id') == 'Enter') {
+            string.splice(caret,0,'\n');
+            textOutput.value = string.join('');
+            textOutput.selectionStart = textOutput.selectionEnd = caret+1;
+        }
 
-function findCaret() {
-    let start,end;
+       
+    }  
 
-    start = textOutput.selectionStart;
-    end = textOutput.selectionEnd;
+    function pressed_up(key) {
+        if (key.code == 'ShiftLeft' || key.getAttribute('id') == 'ShiftLeft' || key.code == 'ShiftRight' || key.getAttribute('id') == 'ShiftRight') {
+            document.querySelectorAll('.shifted').forEach(item=>{
+                item.classList.remove('active');
+            });
+            document.querySelectorAll('.normal').forEach(item=>{
+                item.classList.add('active');
+            });
+        }
+    }
 
-    return [start, end];
 }
 
-// insert letter symbols
+// creates main divs
 
-function pressed_down(key) {
-    let ins = key.getAttribute('id') || key.querySelector('.active').innerText,
-    caret = findCaret()[0],
-    string = textOutput.value.split('');
+function createTextoutput() {
+    textOutput = document.createElement('textarea');
+    textOutput.classList.add(`textOutput`);
+    document.body.append(textOutput);
 
-    if (!key.className.includes('key_func')) {
-        string.splice(caret,0,ins);
-        textOutput.value = string.join('');
-        textOutput.selectionStart = textOutput.selectionEnd = caret +1;
-    }
-
-    if (key.code == 'Backspace' || key.getAttribute('id') == 'Backspace') {
-        string.splice(caret-1,1);
-        textOutput.value = string.join('');
-        textOutput.selectionStart = textOutput.selectionEnd = caret - 1;
-    }
-
-    if (key.code == 'ShiftLeft' || key.getAttribute('id') == 'ShiftLeft' || key.code == 'ShiftRight' || key.getAttribute('id') == 'ShiftRight') {
-        document.querySelectorAll('.normal').forEach(item=>{
-            item.classList.remove('active');
-        });
-       document.querySelectorAll('.shifted').forEach(item=>{
-           item.classList.add('active');
-        });
-    }
-
-    if (key.code == 'Tab' || key.getAttribute('id') == 'Tab') {
-        string.splice(caret,0,'    ');
-        textOutput.value = string.join('');
-        textOutput.selectionStart = textOutput.selectionEnd = caret +4;
-    }
-
-}  
-
-function pressed_up(key) {
-    if (key.code == 'ShiftLeft' || key.getAttribute('id') == 'ShiftLeft' || key.code == 'ShiftRight' || key.getAttribute('id') == 'ShiftRight') {
-        document.querySelectorAll('.shifted').forEach(item=>{
-            item.classList.remove('active');
-        });
-       document.querySelectorAll('.normal').forEach(item=>{
-           item.classList.add('active');
-        });
-    }
 }
+
+function createPad() {
+    pad = document.createElement('div');
+    pad.classList.add('pad');
+    document.body.append(pad);
+
+    en = document.createElement('div');
+    en.classList.add('en');
+    en.classList.add('wrapper');
+    if (localStorage.lang != 'en') {
+        en.classList.add('hidden');
+    }
+    pad.append(en);
+
+    ru = document.createElement('div');
+    ru.classList.add('ru');
+    ru.classList.add('wrapper');
+    if (localStorage.lang != 'ru') {
+        ru.classList.add('hidden');
+    }
+    pad.append(ru);
+}
+
+// draws keypad
+
+function renderKeypad(lang) {
+    lang_pad[lang].map((el,i)=>{
+        let key = document.createElement('div');
+        key.classList.add(keyPad_keys[i]);
+        if (key_func.includes(key.className)) {
+            key.classList.add('key_func');
+            key.classList.add('key');
+            key.setAttribute('id', keyPad_keys[i]);
+        } else {
+            key.classList.add('key');
+        }
+        document.querySelector(`.${lang}`).append(key);
+        el.map(item=>{
+            let span = document.createElement('span');
+            if (symbols[lang].normal.includes(item)) {
+                span.classList.add('normal');
+            } else if (symbols[lang].shifted.includes(item)) {
+                span.classList.add('shifted');
+            }
+            span.innerText = item;
+            key.append(span);
+        });
+        document.querySelectorAll('.normal').forEach(el=>{
+            el.classList.add('active');
+        });
+    });
+}
+
+
 
 
 
