@@ -32,7 +32,6 @@ textarea {
     height: 50px;
     border: 1px solid rgb(142, 175, 245);
     margin: 5px;
-    transition: all 0.2s;
     cursor: pointer;
     background-color: rgb(201, 235, 248);
 }
@@ -56,6 +55,7 @@ span {
     display: inline-block;
     position: relative;
     color: grey;
+    pointer-events: none;
 }
 
 span.active{
