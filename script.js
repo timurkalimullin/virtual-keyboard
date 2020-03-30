@@ -12,7 +12,7 @@ const lang_pad = {
         ['Tab'], ['q','Q' ], ['w','W' ], ['e','E' ], ['r','R'], ['t','T'], ['y','Y'], ['u','U'], ['i','I'], ['o','O'], ['p','P'], ['[','{'], [']', '}'], ['Enter'],
         ['CapsLock'], ['a','A'],['s','S'],['d','D'],['f','F'],['g','G'],['h','H'],['j','J'],['k','K'],['l','L'],[';',':'],["'", '"'],['\\', '|'], ['Del'],
         ['Shift'],['z','Z'],['x','X'],['c','C'],['v','V'],['b','B'],['n','N'],['m','M'],[',','<'],['.','>'],['/','?'],['↑'],['Shift'],
-        ['Ctrl'],['Win'], ['Alt'],[' '], ['Alt'],['Win'], ['Кириллица'], ['Ctrl'],['← '], ['↓ '], ['→ ']
+        ['Ctrl'],['Win'], ['Alt'],[' '], ['Alt'],['Win'], ['Cyr'], ['Ctrl'],['← '], ['↓ '], ['→ ']
     ],
 
     ru : [
@@ -20,7 +20,7 @@ const lang_pad = {
         ['Tab'], ['й','Й' ], ['ц','Ц'], ['у','У'], ['к','К'], ['е','Е'], ['н','Н'], ['г','Г'], ['ш','Ш'], ['щ','Щ'], ['з','З'], ['х','Х'], ['ъ','Ъ'], ['Enter'],
         ['CapsLock'], ['ф','Ф'],['ы','Ы'],['в','В'],['а','А'],['п','П'],['р','Р'],['о','О'],['л','Л'],['д','Д'],['ж','Ж'],['э','Э'],['\\', '/'], ['Del'],
         ['Shift'],['я','Я'],['ч','Ч'],['с','С'],['м','М'],['и','И'],['т','Т'],['ь','Ь'],['б','Б'],['ю','Ю'],['.',','],['↑'], ['Shift'],
-        ['Ctrl'],['Win'], ['Alt'],[' '], ['Alt'],['Win'], ['Latin'], ['Ctrl'],['← '], ['↓ '], ['→ ']
+        ['Ctrl'],['Win'], ['Alt'],[' '], ['Alt'],['Win'], ['Lat'], ['Ctrl'],['← '], ['↓ '], ['→ ']
     ],
 },
 keyPad_keys = [
@@ -63,6 +63,8 @@ function listeners() {
     window.addEventListener('keydown', (e)=>{
         e.preventDefault();
 
+        textOutput.focus();
+
         let code = e.code,
         key = document.querySelector(`.${localStorage.lang} .${code}`);
 
@@ -74,7 +76,6 @@ function listeners() {
         if (key.getAttribute('id') !== 'CapsLock') {
             pressed_down(key);
         } else if (key.getAttribute('id') == 'CapsLock') {
-           
             caps();
         }
     });
@@ -186,7 +187,7 @@ function caps() {
 
 function mousedownHandler() {
     if (event.target.id == 'CapsLock') {
-        caps(event.target);
+        caps();
     } else if (event.target.className.includes('key')) {
         textOutput.focus();
         event.target.classList.add('pressed');
@@ -202,14 +203,13 @@ function mouseupHandler() {
 }
 
 function mouseleaveHandler() {
-    event.target.classList.remove('pressed');
-        
+    event.target.classList.remove('pressed');    
 }
 
 
 // insert letter symbols and handle function keys
 
-function pressed_down(key, e) {
+function pressed_down(key) {
     let ins = key.getAttribute('id') || key.querySelector('.active').innerText,
     caret = findCaret()[0],
     string = textOutput.value.split('');
@@ -240,7 +240,7 @@ function pressed_down(key, e) {
         } else if (findCaret[0]==findCaret[1]) {
             string.splice(caret,1);
             textOutput.value = string.join('');
-            textOutput.selectionStart = textOutput.selectionEnd = caret + 1;
+            textOutput.selectionStart = textOutput.selectionEnd = caret ;
         } 
     }
 
@@ -299,7 +299,7 @@ function pressed_down(key, e) {
     if (key.code =='ContextMenu' || key.getAttribute('id') == 'ContextMenu') {
         changeLang();
     }
-
+    textOutput.focus();
 
 }  
 
