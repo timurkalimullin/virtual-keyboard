@@ -60,35 +60,11 @@ listeners();
 function listeners() {
     // handles keyboard events
 
-    window.addEventListener('keydown', (e)=>{
-        e.preventDefault();
+    window.addEventListener('keydown', keydownHandler);
 
-        textOutput.focus();
+    window.addEventListener('keyup', keyupHandler);
 
-        let code = e.code,
-        key = document.querySelector(`.${localStorage.lang} .${code}`);
 
-        if (e.ctrlKey && e.altKey) {
-            changeLang();
-        }
-
-        key.classList.add('pressed');
-        if (key.getAttribute('id') !== 'CapsLock') {
-            pressed_down(key);
-        } else if (key.getAttribute('id') == 'CapsLock') {
-            caps();
-        }
-    });
-
-    window.addEventListener('keyup', (e)=>{
-        let code = e.code,
-        key = document.querySelector(`.${localStorage.lang} .${code}`);
-
-        if (key.getAttribute('id') !== 'CapsLock') {
-            key.classList.remove('pressed');
-            pressed_up(key);
-        }
-    });
 
     // handles mouse events 
 
@@ -97,9 +73,7 @@ function listeners() {
     pad.addEventListener('mouseup', mouseupHandler);
 
     document.querySelectorAll('.key').forEach(el=>{
-        if (el.getAttribute('id') !== 'CapsLock') {
-            el.addEventListener('mouseleave', mouseleaveHandler);
-        }
+       el.addEventListener('mouseleave', mouseleaveHandler);
     });
 
 }
@@ -168,15 +142,6 @@ function renderKeypad(lang) {
 // handles capslock
 
 function caps() {
-    if (capsLockState == true) {
-        document.querySelectorAll('#CapsLock').forEach(el=>{
-            el.classList.remove('pressed');
-        });
-    } else {
-        document.querySelectorAll('#CapsLock').forEach(el=>{
-            el.classList.add('pressed');
-        });
-    }
     capsLockState = !capsLockState;
     document.querySelectorAll('span').forEach(key=>{
         key.classList.toggle('active');
@@ -187,12 +152,22 @@ function caps() {
 
 function mousedownHandler() {
     if (event.target.id == 'CapsLock') {
+        if (capsLockState == true) {
+            document.querySelectorAll('#CapsLock').forEach(el=>{
+                el.classList.remove('pressed');
+            });
+        } else {
+            document.querySelectorAll('#CapsLock').forEach(el=>{
+                el.classList.add('pressed');
+            });
+        }
         caps();
     } else if (event.target.className.includes('key')) {
         textOutput.focus();
         event.target.classList.add('pressed');
         pressed_down(event.target);
     }
+
 }
 
 function mouseupHandler() {
@@ -200,10 +175,55 @@ function mouseupHandler() {
         event.target.classList.remove('pressed');
         pressed_up(event.target);
     }
+    textOutput.focus();
 }
 
 function mouseleaveHandler() {
-    event.target.classList.remove('pressed');    
+        if (event.currentTarget.getAttribute('id') !== 'CapsLock') {
+            event.currentTarget.classList.remove('pressed');   
+        }
+}
+
+// keypress in and out handlers
+
+function keydownHandler() {
+    event.preventDefault();
+
+    textOutput.focus();
+
+    let code = event.code,
+    key = document.querySelector(`.${localStorage.lang} .${code}`);
+
+    if (event.ctrlKey && event.altKey) {
+        changeLang();
+    }
+
+    
+    if (key.getAttribute('id') !== 'CapsLock') {
+        key.classList.add('pressed');
+        pressed_down(key);
+    }
+}
+
+function keyupHandler() {
+    let code = event.code,
+    key = document.querySelector(`.${localStorage.lang} .${code}`);
+
+    if (key.getAttribute('id') !== 'CapsLock') {
+        key.classList.remove('pressed');
+        pressed_up(key);
+    } else {
+        if (capsLockState == true) {
+            document.querySelectorAll('#CapsLock').forEach(el=>{
+                el.classList.remove('pressed');
+            });
+        } else {
+            document.querySelectorAll('#CapsLock').forEach(el=>{
+                el.classList.add('pressed');
+            });
+        }
+        caps();
+    }
 }
 
 
@@ -321,6 +341,7 @@ function pressed_up(key) {
             });
         }
     }
+
 }
 
 // finds caret location
