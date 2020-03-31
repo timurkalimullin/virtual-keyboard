@@ -175,6 +175,7 @@ function mouseupHandler() {
         event.target.classList.remove('pressed');
         pressed_up(event.target);
     }
+    textOutput.focus();
 }
 
 function mouseleaveHandler() {
@@ -340,6 +341,7 @@ function pressed_up(key) {
             });
         }
     }
+
 }
 
 // finds caret location
