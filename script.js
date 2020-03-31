@@ -175,6 +175,7 @@ function mouseupHandler() {
         event.target.classList.remove('pressed');
         pressed_up(event.target);
     }
+    textOutput.focus();
 }
 
 function mouseleaveHandler() {
@@ -300,7 +301,9 @@ function pressed_down(key) {
     }
 
     if (key.code == 'ArrowLeft' || key.getAttribute('id') == 'ArrowLeft') {
-        textOutput.selectionStart = textOutput.selectionEnd -=1;
+        if (textOutput.selectionStart>=0 && textOutput.selectionEnd >0 ) {
+            textOutput.selectionStart = textOutput.selectionEnd -=1;
+        }
     }
 
     if (key.code == 'ArrowRight' || key.getAttribute('id') == 'ArrowRight') {
@@ -340,6 +343,7 @@ function pressed_up(key) {
             });
         }
     }
+
 }
 
 // finds caret location
