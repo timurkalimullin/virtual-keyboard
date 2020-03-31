@@ -84,7 +84,10 @@ function createTextoutput() {
     textOutput = document.createElement('textarea');
     textOutput.classList.add(`textOutput`);
     document.body.append(textOutput);
-
+    let info = document.createElement('div');
+    info.classList.add('info');
+    info.innerHTML = '<h1>Виртуальная клавиатура</h1><p> Переключение языка: левый контрол + левый альт на физической клавиатуре либо кнопка "Cyr/Lat" на виртуальной</p><p>Стрелки перемещают каретку вправо и влево, при нажатии стрелки "вверх" каретка переносится в начало строки,при нажатии стрелки "вниз" каретка переносится в конец строки,</p>';
+    document.body.prepend(info);
 }
 
 function createPad() {
@@ -301,7 +304,9 @@ function pressed_down(key) {
     }
 
     if (key.code == 'ArrowLeft' || key.getAttribute('id') == 'ArrowLeft') {
-        textOutput.selectionStart = textOutput.selectionEnd -=1;
+        if (textOutput.selectionStart>=0 && textOutput.selectionEnd >0 ) {
+            textOutput.selectionStart = textOutput.selectionEnd -=1;
+        }
     }
 
     if (key.code == 'ArrowRight' || key.getAttribute('id') == 'ArrowRight') {
