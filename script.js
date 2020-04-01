@@ -30,6 +30,9 @@ keyPad_keys = [
     'ShiftLeft', 'KeyZ','KeyX','KeyC','KeyV','KeyB','KeyN','KeyM','Comma','Period','Slash','ArrowUp', 'ShiftRight',
     'ControlLeft','OSLeft','AltLeft','Space', 'AltRight','OSRight', 'ContextMenu', 'ControlRight', 'ArrowLeft', 'ArrowDown', 'ArrowRight'
 ],
+letters = ['KeyQ','KeyW','KeyE','KeyR','KeyT','KeyY','KeyU','KeyI','KeyO','KeyP','BracketLeft','BracketRight',
+'KeyA','KeyS','KeyD','KeyF','KeyG','KeyH','KeyJ','KeyK','KeyL','Semicolon','Quote','Backslash',
+'KeyZ','KeyX','KeyC','KeyV','KeyB','KeyN','KeyM','Comma','Period','Slash'],
 
 symbols = {
     en: {
@@ -118,6 +121,9 @@ function renderKeypad(lang) {
     lang_pad[lang].map((el,i)=>{
         let key = document.createElement('div');
         key.classList.add(keyPad_keys[i]);
+        if (letters.includes(keyPad_keys[i])){
+            key.classList.add('letter');
+        }
         if (key_func.includes(key.className)) {
             key.classList.add('key_func');
             key.classList.add('key');
@@ -146,8 +152,10 @@ function renderKeypad(lang) {
 
 function caps() {
     capsLockState = !capsLockState;
-    document.querySelectorAll('span').forEach(key=>{
-        key.classList.toggle('active');
+    document.querySelectorAll('.letter').forEach(key=>{
+        key.querySelectorAll('span').forEach(item=>{
+            item.classList.toggle('active');
+        });
     });
 }
 
@@ -184,6 +192,9 @@ function mouseupHandler() {
 function mouseleaveHandler() {
         if (event.currentTarget.getAttribute('id') !== 'CapsLock') {
             event.currentTarget.classList.remove('pressed');   
+        }
+        if (event.currentTarget.getAttribute('id') == 'ShiftRight' || event.currentTarget.getAttribute('id') == 'ShiftLeft') {
+            pressed_up(event.currentTarget);
         }
 }
 
@@ -276,11 +287,24 @@ function pressed_down(key) {
                 item.classList.add('active');
             });
         } else {
-            document.querySelectorAll('.normal').forEach(item=>{
-                item.classList.add('active');
-            });
-            document.querySelectorAll('.shifted').forEach(item=>{
-                item.classList.remove('active');
+            document.querySelectorAll('.key').forEach(el=>{
+                if (el.className.includes('letter')) {
+                    el.childNodes.forEach(item=>{
+                        if (item.className.includes('shifted')) {
+                            item.classList.remove('active');
+                        } else {
+                            item.classList.add('active');
+                        }
+                    });
+                } else {
+                    el.childNodes.forEach(item=>{
+                        if (item.className.includes('shifted')) {
+                            item.classList.add('active');
+                        } else {
+                            item.classList.remove('active');
+                        }
+                    });
+                }
             });
         }
     }
@@ -345,11 +369,24 @@ function pressed_up(key) {
                 item.classList.add('active');
             });
         } else {
-            document.querySelectorAll('.shifted').forEach(item=>{
-                item.classList.add('active');
-            });
-            document.querySelectorAll('.normal').forEach(item=>{
-                item.classList.remove('active');
+            document.querySelectorAll('.key').forEach(el=>{
+                if (el.className.includes('letter')) {
+                    el.childNodes.forEach(item=>{
+                        if (item.className.includes('shifted')) {
+                            item.classList.add('active');
+                        } else {
+                            item.classList.remove('active');
+                        }
+                    });
+                } else {
+                    el.childNodes.forEach(item=>{
+                        if (item.className.includes('shifted')) {
+                            item.classList.remove('active');
+                        } else {
+                            item.classList.add('active');
+                        }
+                    });
+                }
             });
         }
     }
@@ -365,16 +402,7 @@ function findCaret() {
 // change language
 
 function changeLang() {
-    capsLockState = false;
-    document.querySelectorAll('#CapsLock').forEach(el=>{
-        el.classList.remove('pressed');
-    });
-    document.querySelectorAll('.shifted').forEach(el=>{
-        el.classList.remove('active');
-    });
-    document.querySelectorAll('.normal').forEach(el=>{
-        el.classList.add('active');
-    });
+
     if (localStorage.getItem('lang') == 'en') {
         localStorage.setItem('lang', 'ru');
     } else {
