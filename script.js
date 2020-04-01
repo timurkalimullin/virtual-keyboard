@@ -63,7 +63,7 @@ class VK {
         document.body.append(this.textOutput);
         let info = document.createElement('div');
         info.classList.add('info');
-        info.innerHTML = '<h1>Виртуальная клавиатура</h1><p> Переключение языка: левый контрол + левый альт на физической клавиатуре либо кнопка "Cyr/Lat" на виртуальной</p><p>Стрелки перемещают каретку вправо и влево, при нажатии стрелки "вверх" каретка переносится в начало строки,при нажатии стрелки "вниз" каретка переносится в конец строки,</p>';
+        info.innerHTML = '<h1>Виртуальная клавиатура</h1><p> Переключение языка: левый контрол + левый альт на физической клавиатуре либо кнопка "Cyr/Lat" на виртуальной</p><p>Стрелки перемещают каретку вправо и влево, при нажатии стрелки "вверх" каретка переносится в начало строки,при нажатии стрелки "вниз" каретка переносится в конец строки,</p><p>Есть функции удаления через Backspace, Delete, также можно удалять выделяя текст и нажимая эти клавиши или просто вставляя символ</p>';
         document.body.prepend(info);
     }
 
@@ -217,9 +217,16 @@ class VK {
         string = this.textOutput.value.split('');
     
         if (!key.className.includes('key_func')) {
-            string.splice(caret,0,ins);
-            this.textOutput.value = string.join('');
-            this.textOutput.selectionStart = this.textOutput.selectionEnd = caret +1;
+            if (this.findCaret()[0]==this.findCaret()[1]) {
+                string.splice(caret,0,ins);
+                this.textOutput.value = string.join('');
+                this.textOutput.selectionStart = this.textOutput.selectionEnd = caret +1;
+            } else {
+                string.splice(this.findCaret()[0], this.findCaret()[1], ins);
+                this.textOutput.value = string.join('');
+                this.textOutput.selectionStart = this.textOutput.selectionEnd = caret +1;
+            }
+
         }
     
         if (event.code == 'Backspace' || key.getAttribute('id') == 'Backspace') {
