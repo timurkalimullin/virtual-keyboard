@@ -254,7 +254,7 @@ function pressed_down(key) {
         textOutput.selectionStart = textOutput.selectionEnd = caret +1;
     }
 
-    if (key.code == 'Backspace' || key.getAttribute('id') == 'Backspace') {
+    if (event.code == 'Backspace' || key.getAttribute('id') == 'Backspace') {
         if (findCaret()[0]<findCaret()[1]) {
             textOutput.value = string.join('');
             textOutput.setRangeText("", findCaret()[0], findCaret()[1], "end");
@@ -266,7 +266,7 @@ function pressed_down(key) {
         } 
     }
 
-    if (key.code == 'Delete' || key.getAttribute('id') == 'Delete') {
+    if (event.code == 'Delete' || key.getAttribute('id') == 'Delete') {
         if (findCaret()[0]<findCaret()[1]) {
             textOutput.value = string.join('');
             textOutput.setRangeText("", findCaret()[0], findCaret()[1], "end");
@@ -278,7 +278,7 @@ function pressed_down(key) {
         } 
     }
 
-    if (key.code == 'ShiftLeft' || key.getAttribute('id') == 'ShiftLeft' || key.code == 'ShiftRight' || key.getAttribute('id') == 'ShiftRight') {
+    if (event.code == 'ShiftLeft' || key.getAttribute('id') == 'ShiftLeft' || event.code == 'ShiftRight' || key.getAttribute('id') == 'ShiftRight') {
         if (capsLockState == false) {
             document.querySelectorAll('.normal').forEach(item=>{
                 item.classList.remove('active');
@@ -309,43 +309,43 @@ function pressed_down(key) {
         }
     }
 
-    if (key.code == 'Tab' || key.getAttribute('id') == 'Tab') {
+    if (event.code == 'Tab' || key.getAttribute('id') == 'Tab') {
         string.splice(caret,0,'    ');
         textOutput.value = string.join('');
         textOutput.selectionStart = textOutput.selectionEnd = caret +4;
     }
 
-    if (key.code == 'Space' || key.getAttribute('id') == 'Space') {
+    if (event.code == 'Space' || key.getAttribute('id') == 'Space') {
         string.splice(caret,0,' ');
         textOutput.value = string.join('');
         textOutput.selectionStart = textOutput.selectionEnd = caret +1;
     }
 
-    if (key.code == 'Enter' || key.getAttribute('id') == 'Enter') {
+    if (event.code == 'Enter' || key.getAttribute('id') == 'Enter') {
         string.splice(caret,0,'\n');
         textOutput.value = string.join('');
         textOutput.selectionStart = textOutput.selectionEnd = caret+1;
     }
 
-    if (key.code == 'ArrowLeft' || key.getAttribute('id') == 'ArrowLeft') {
+    if (event.code == 'ArrowLeft' || key.getAttribute('id') == 'ArrowLeft') {
         if (textOutput.selectionStart>=0 && textOutput.selectionEnd >0 ) {
             textOutput.selectionStart = textOutput.selectionEnd -=1;
         }
     }
 
-    if (key.code == 'ArrowRight' || key.getAttribute('id') == 'ArrowRight') {
+    if (event.code == 'ArrowRight' || key.getAttribute('id') == 'ArrowRight') {
         textOutput.selectionStart = textOutput.selectionEnd +=1;
     }
 
-    if (key.code == 'ArrowUp' || key.getAttribute('id') == 'ArrowUp') {
+    if (event.code == 'ArrowUp' || key.getAttribute('id') == 'ArrowUp') {
         textOutput.selectionStart = textOutput.selectionEnd = 0;
     }  
     
-    if (key.code == 'ArrowDown' || key.getAttribute('id') == 'ArrowDown') {
+    if (event.code == 'ArrowDown' || key.getAttribute('id') == 'ArrowDown') {
         textOutput.selectionStart = textOutput.selectionEnd = textOutput.value.length;
     }   
 
-    if (key.code =='ContextMenu' || key.getAttribute('id') == 'ContextMenu') {
+    if (event.code =='ContextMenu' || key.getAttribute('id') == 'ContextMenu') {
         let arr= ['ControlLeft', 'ControlRight', 'AltLeft', 'AltRight'];
 
         arr.map(el=>{
@@ -360,7 +360,7 @@ function pressed_down(key) {
 }  
 
 function pressed_up(key) {
-    if (key.code == 'ShiftLeft' || key.getAttribute('id') == 'ShiftLeft' || key.code == 'ShiftRight' || key.getAttribute('id') == 'ShiftRight') {
+    if (event.code == 'ShiftLeft' || key.getAttribute('id') == 'ShiftLeft' || event.code == 'ShiftRight' || key.getAttribute('id') == 'ShiftRight') {
         if (capsLockState == false) {
             document.querySelectorAll('.shifted').forEach(item=>{
                 item.classList.remove('active');
