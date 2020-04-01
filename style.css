@@ -17,7 +17,10 @@ textarea {
     resize: none;
     width: 80%;
     height: 30vh;
-    border: 1px ridge gray;
+    border: 6px ridge rgb(91, 136, 161);
+    background-color: rgb(218, 227, 236);
+    color:rgb(71, 68, 68);
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 
 .info {
@@ -32,6 +35,8 @@ p {
 }
 
 .pad {
+    background-color: lightslategray;
+    border: 6px ridge rgb(91, 136, 161);
     max-width: 900px;
     width: 80%;
     margin: 0 auto;
