@@ -322,6 +322,13 @@ function pressed_down(key) {
     }   
 
     if (key.code =='ContextMenu' || key.getAttribute('id') == 'ContextMenu') {
+        let arr= ['ControlLeft', 'ControlRight', 'AltLeft', 'AltRight'];
+
+        arr.map(el=>{
+            document.querySelectorAll(`#${el}`).forEach(item=>{
+                item.classList.remove('pressed');
+            });
+        });
         changeLang();
     }
     textOutput.focus();
