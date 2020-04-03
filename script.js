@@ -51,9 +51,9 @@ class VK {
   }
 
   //  put lang var into local storage
-  local() {
-    if (localStorage.lang !== 'ru' && localStorage.lang !== 'en') {
-      localStorage.setItem('lang', 'en');
+  static local() {
+    if (window.localStorage.lang !== 'ru' && window.localStorage.lang !== 'en') {
+      window.localStorage.setItem('lang', 'en');
     }
   }
 
@@ -92,7 +92,7 @@ class VK {
 
   // draws a keyboard
   renderKeypad(lang) {
-    this.lang_pad[lang].map((el, i) => {
+    this.lang_pad[lang].forEach((el, i) => {
       const key = document.createElement('div');
       key.classList.add(this.keyPad_keys[i]);
       if (this.letters.includes(this.keyPad_keys[i])) {
@@ -106,7 +106,7 @@ class VK {
         key.classList.add('key');
       }
       document.querySelector(`.${lang}`).append(key);
-      el.map((item) => {
+      el.forEach((item) => {
         const span = document.createElement('span');
         if (this.symbols[lang].normal.includes(item)) {
           span.classList.add('normal');
@@ -160,7 +160,7 @@ class VK {
     this.textOutput.focus();
   }
 
-  mouseleaveHandler() {
+  mouseleaveHandler(event) {
     if (event.currentTarget.getAttribute('id') !== 'CapsLock') {
       event.currentTarget.classList.remove('pressed');
     }
@@ -180,7 +180,7 @@ class VK {
     const key = document.querySelector(`.${localStorage.lang} .${code}`);
 
     if (event.ctrlKey && event.altKey) {
-      this.changeLang();
+      VK.changeLang();
     }
 
 
@@ -212,32 +212,33 @@ class VK {
   }
 
   // insert letter symbols and handle function keys
-  pressedDown(key) {
+  pressedDown(event) {
+    const key = event;
     const ins = key.getAttribute('id') || key.querySelector('.active').innerText;
     const caret = this.findCaret()[0];
     const string = this.textOutput.value.split('');
 
     if (!key.className.includes('key_func')) {
-      if (this.findCaret()[0] === this.findCaret()[1]) {
-        string.splice(caret, 0, ins);
-        this.textOutput.value = string.join('');
-        this.textOutput.selectionStart = this.textOutput.selectionEnd = caret + 1;
-      } else if (this.findCaret()[0] <= this.findCaret()[1]) {
-        string.splice(this.findCaret()[0], this.findCaret()[1], ins);
-        this.textOutput.value = string.join('');
-        this.textOutput.selectionStart = this.textOutput.selectionEnd = caret + 1;
-      }
+      string.splice(this.findCaret()[0], this.findCaret()[1] - this.findCaret()[0], ins);
+      this.textOutput.value = string.join('');
+      this.textOutput.selectionStart = caret + 1;
+      this.textOutput.selectionEnd = caret + 1;
     }
 
     if (event.code === 'Backspace' || key.getAttribute('id') === 'Backspace') {
       if (this.findCaret()[0] < this.findCaret()[1]) {
         this.textOutput.value = string.join('');
         this.textOutput.setRangeText('', this.findCaret()[0], this.findCaret()[1], 'end');
-        this.textOutput.selectionStart = this.textOutput.selectionEnd = caret;
+        this.textOutput.selectionStart = caret;
+        this.textOutput.selectionEnd = caret;
       } else if (this.findCaret[0] === this.findCaret[1]) {
-        string.splice(caret - 1, 1);
-        this.textOutput.value = string.join('');
-        this.textOutput.selectionStart = this.textOutput.selectionEnd = caret - 1;
+        if (this.textOutput.selectionStart !== 0 && this.textOutput.selectionEnd !==0) {
+          string.splice(caret - 1, 1);
+          this.textOutput.value = string.join('');
+          this.textOutput.selectionStart = caret - 1;
+          this.textOutput.selectionEnd = caret - 1;
+        }
+
       }
     }
 
@@ -245,11 +246,13 @@ class VK {
       if (this.findCaret()[0] < this.findCaret()[1]) {
         this.textOutput.value = string.join('');
         this.textOutput.setRangeText('', this.findCaret()[0], this.findCaret()[1], 'end');
-        this.textOutput.selectionStart = this.textOutput.selectionEnd = caret;
+        this.textOutput.selectionStart = caret;
+        this.textOutput.selectionEnd = caret;
       } else if (this.findCaret[0] === this.findCaret[1]) {
         string.splice(caret, 1);
         this.textOutput.value = string.join('');
-        this.textOutput.selectionStart = this.textOutput.selectionEnd = caret;
+        this.textOutput.selectionStart = caret;
+        this.textOutput.selectionEnd = caret;
       }
     }
 
@@ -287,53 +290,61 @@ class VK {
     if (event.code === 'Tab' || key.getAttribute('id') === 'Tab') {
       string.splice(caret, 0, '    ');
       this.textOutput.value = string.join('');
-      this.textOutput.selectionStart = this.textOutput.selectionEnd = caret + 4;
+      this.textOutput.selectionStart = caret + 4;
+      this.textOutput.selectionEnd = caret + 4;
     }
 
     if (event.code === 'Space' || key.getAttribute('id') === 'Space') {
       string.splice(caret, 0, ' ');
       this.textOutput.value = string.join('');
-      this.textOutput.selectionStart = this.textOutput.selectionEnd = caret + 1;
+      this.textOutput.selectionStart = caret + 1;
+      this.textOutput.selectionEnd = caret + 1;
     }
 
     if (event.code === 'Enter' || key.getAttribute('id') === 'Enter') {
       string.splice(caret, 0, '\n');
       this.textOutput.value = string.join('');
-      this.textOutput.selectionStart = this.textOutput.selectionEnd = caret + 1;
+      this.textOutput.selectionStart = caret + 1;
+      this.textOutput.selectionEnd = caret + 1;
     }
 
     if (event.code === 'ArrowLeft' || key.getAttribute('id') === 'ArrowLeft') {
       if (this.textOutput.selectionStart >= 0 && this.textOutput.selectionEnd > 0) {
-        this.textOutput.selectionStart = this.textOutput.selectionEnd -= 1;
+        this.textOutput.selectionStart -= 1;
+        this.textOutput.selectionEnd -= 1;
       }
     }
 
     if (event.code === 'ArrowRight' || key.getAttribute('id') === 'ArrowRight') {
-      this.textOutput.selectionStart = this.textOutput.selectionEnd += 1;
+      this.textOutput.selectionStart += 1;
+      this.textOutput.selectionEnd += 1;
     }
 
     if (event.code === 'ArrowUp' || key.getAttribute('id') === 'ArrowUp') {
-      this.textOutput.selectionStart = this.textOutput.selectionEnd = 0;
+      this.textOutput.selectionStart = 0;
+      this.textOutput.selectionEnd = 0;
     }
 
     if (event.code === 'ArrowDown' || key.getAttribute('id') === 'ArrowDown') {
-      this.textOutput.selectionStart = this.textOutput.selectionEnd = this.textOutput.value.length;
+      this.textOutput.selectionStart = this.textOutput.value.length;
+      this.textOutput.selectionEnd = this.textOutput.value.length;
     }
 
     if (event.code === 'ContextMenu' || key.getAttribute('id') === 'ContextMenu') {
       const arr = ['ControlLeft', 'ControlRight', 'AltLeft', 'AltRight'];
 
-      arr.map((el) => {
+      arr.forEach((el) => {
         document.querySelectorAll(`#${el}`).forEach((item) => {
           item.classList.remove('pressed');
         });
       });
-      this.changeLang();
+      VK.changeLang();
     }
     this.textOutput.focus();
   }
 
-  pressedUp(key) {
+  pressedUp(event) {
+    const key = event;
     if (event.code === 'ShiftLeft' || key.getAttribute('id') === 'ShiftLeft' || event.code === 'ShiftRight' || key.getAttribute('id') === 'ShiftRight') {
       if (this.capsLockState === false) {
         document.querySelectorAll('.shifted').forEach((item) => {
@@ -371,7 +382,7 @@ class VK {
     return [this.textOutput.selectionStart, this.textOutput.selectionEnd];
   }
 
-  changeLang() {
+  static changeLang() {
     if (localStorage.getItem('lang') === 'en') {
       localStorage.setItem('lang', 'ru');
     } else {
@@ -405,8 +416,8 @@ class VK {
     });
 
     document.querySelectorAll('.key').forEach((el) => {
-      el.addEventListener('mouseleave', () => {
-        this.mouseleaveHandler();
+      el.addEventListener('mouseleave', (event) => {
+        this.mouseleaveHandler(event);
       });
     });
   }
@@ -414,6 +425,7 @@ class VK {
 
 window.onload = () => {
   const keyboard = new VK();
+  VK.local();
   keyboard.createTextoutput();
   keyboard.createPad();
   keyboard.renderKeypad('en');
