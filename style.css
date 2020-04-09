@@ -1,0 +1,139 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    background-color: lavender;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+textarea {
+    display: block;
+    margin: 1% auto;
+    max-width: 900px;
+    max-height: 300px;
+    resize: none;
+    width: 80%;
+    height: 30vh;
+    border: 6px ridge rgb(91, 136, 161);
+    background-color: rgb(218, 227, 236);
+    color:rgb(71, 68, 68);
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.info {
+    text-align: center;
+    padding: 5px 30px;
+    font-size: 14px;
+}
+
+p {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.pad {
+    background-color: lightslategray;
+    border: 6px ridge rgb(91, 136, 161);
+    max-width: 900px;
+    width: 80%;
+    margin: 0 auto;
+}
+
+.wrapper {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    user-select: none;
+}
+
+.pad>.hidden{
+    display: none;
+}
+
+.key {
+    position: relative;
+    flex: 0 1 6%;
+    height: 50px;
+    margin: 3px;
+    cursor: pointer;
+    color: #fff;
+    text-decoration: none;
+    text-shadow: 0 -1px rgba(0,0,0,.5);
+    user-select: none;
+    border: 1px solid rgb(80,32,0);
+    border-radius: 5px;
+    outline: none;
+    background: rgb(147,80,36) linear-gradient(rgb(106,58,26), rgb(147,80,36) 80%);
+    box-shadow:
+     0 2px rgb(86,38,6),
+     0 1px 6px rgba(0,0,0,.4),
+     inset 0 1px rgba(255,255,255,.3),
+     inset 0 0 3px rgba(255,255,255,.5);
+    transition: .2s all;
+}
+
+.pad .key.pressed{
+    background: rgb(223, 132, 72) linear-gradient(rgb(207, 180, 161) 20%, rgb(231, 157, 108));
+    box-shadow:
+     0 2px rgb(86,38,6),
+     0 1px 6px rgba(0,0,0,.4),
+     inset 0 1px rgba(255,255,255,.3),
+     inset 0 0 3px rgba(255,255,255,.5);
+    -webkit-transform: translate(0, 4px);
+    transform: translate(-1px, 1px);
+}
+
+#CapsLock.key.pressed{
+    background: rgb(120,63,25) linear-gradient(rgb(126, 134, 46) 20%, rgb(139, 126, 2));
+}
+
+.key:hover{
+    background: rgb(167,91,41) linear-gradient(rgb(126,69,31), rgb(167,91,41) 80%);
+}
+
+.key_func {
+    text-align: center;
+}
+
+.key_func span{
+    top:40%;
+    color:rgb(253, 253, 253);
+}
+
+span {
+    display: inline-block;
+    position: relative;
+    color: rgb(228, 161, 161);
+    pointer-events: none;
+}
+
+span.active{
+    color:rgb(253, 253, 253);
+}
+
+span.normal{
+    top: 45%;
+    left: 60%;
+}
+
+span.shifted{
+    top: 5%;
+    left: 5%;
+}
+
+#BackSpace,#Tab,#Enter {
+    flex-basis: 9%;
+}
+#CapsLock{
+    flex-basis: 12%;
+}
+#ShiftLeft,#ShiftRight{
+    flex-basis: 10%;
+}
+#Space{
+    flex-basis: 31%;
+}
